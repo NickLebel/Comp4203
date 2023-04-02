@@ -34,3 +34,13 @@
 
 ## Scenario 3
 - TBD
+
+## Data and Metrics
+### CSV Files
+- Throughput in Kbps in 2nd column (ReceiveRate)
+- First ~100 empty lines are simulation preparation after program build.
+
+### XML Files
+- Data per receiver of simulation
+- PDR and packet loss can be calculated from txPackets (total packets) vs. lossPackets
+- Delay can be calculated by delay sum / total succesful packets **Needs to be verified**
