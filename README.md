@@ -9,7 +9,7 @@
 | Packet Size             | OnOff Application                             |
 | Protocol MAC            | 802.11                                        |
 | RTS/CTS                 | None                                          |
-| Model Mobility Model    | Random Way Point                              |
+| Mobility Model          | Random Way Point                              |
 | Simulation Time         | 200 seconds                                   |
 
 
