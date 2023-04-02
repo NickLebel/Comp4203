@@ -2,7 +2,7 @@
 |-------------------------|-----------------------------------------------|
 | Simulation Program      | NS-3.35                                       |
 | Operating System        | Ubuntu 22.04 LTS                              |
-| Number of Node          | 20,30,50,70                                   |
+| Number of Node          | 10,20,30,40,50,70                             |
 | Number of Area(m)       | 100x100, 200x200, 300x300, 500x500, 1000x1000 |
 | Simulation Speed (m/s)  | 1m/s, 2m/s, 5m/s, 10m/s, 20m/s                |
 | Radio Propagation Model | Friis Propagation Loss                        |
