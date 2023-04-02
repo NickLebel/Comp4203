@@ -29,7 +29,11 @@
 
 
 ## Scenario 2
-- TBD
+- Area       = (100x100 not included), 300x300, 500x500, 1000x1000
+- Node speed = 5m/s
+- Nodes      = 70
+- Receivers  = 10
+- Matched paper :x:
 
 
 ## Scenario 3
