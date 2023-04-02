@@ -43,4 +43,4 @@
 ### XML Files
 - Data per receiver of simulation
 - PDR and packet loss can be calculated from txPackets (total packets) vs. lossPackets
-- Delay can be calculated by delay sum / total succesful packets **Needs to be verified**
+- Delay can be calculated by delay sum / total succesful packets - *Needs to be verified*
