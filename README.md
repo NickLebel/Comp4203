@@ -61,3 +61,7 @@
 - AODV seems faster on small scale
 - DSDV faster on medium to large scale
 - OLSR consistently slowest run time
+
+### To Run Analysis:
+
+- `pip install -r requirements.txt`
