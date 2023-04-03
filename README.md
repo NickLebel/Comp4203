@@ -19,25 +19,33 @@
 - Node speed = 5m/s
 - Nodes      = 20 / 30 / 50 / 70 / (100 not included)
 - Receivers  = 10
+- Limitations: Run time of 100 node
 - Matched paper :x:
 ### [Experiment 2](https://github.com/NickLebel/Comp4203/tree/master/Scenario%201/Experiment%202)
 - Area       = 200x200
 - Node speed = 5m/s
 - Nodes      = 10 / 20 / 30 / 40 / 50
 - Receivers  = 5 / 10 / 15 / 20 / 25
+- Limitations: None
 - Matched paper :heavy_check_mark:
 
 
-## Scenario 2
+## [Scenario 2](https://github.com/NickLebel/Comp4203/tree/master/Scenario%202)
 - Area       = (100x100 not included), 300x300, 500x500, 1000x1000
 - Node speed = 5m/s
 - Nodes      = 70
 - Receivers  = 10
+- Limitations: Run time of 100x100
 - Matched paper :x:
 
 
 ## Scenario 3
-- TBD
+- Area       = 200x200
+- Node speed = 1m/s, 2m/s, 5m/s, 10m/s, 20m/s
+- Nodes      = 50 (instead of 70)
+- Receivers  = 10
+- Limitations: Run time of 70 node
+- Matched paper :x:
 
 ## Data and Metrics
 ### CSV Files
