@@ -1,0 +1,1 @@
+The nodes vs receivers experiment is conducted by keeping the area and the speed constant and changing the number of nodes [10,20,30,40,50] while having the number of receivers be half of the number of nodes [5,10,15,20,25] for each routing protocol [AODV, DSDC, OLSR].
