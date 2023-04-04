@@ -314,7 +314,7 @@ RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
 
   //set node speed and remove randomness
   std::stringstream ssSpeed;
-  ssSpeed << "ns3::UniformRandomVariable[Min="<< nodeSpeed << "|Max=" << nodeSpeed << "]";
+  ssSpeed << "ns3::ConstantRandomVariable[Constant=" << nodeSpeed << "]";  
   
   //set node pause - ignored
   std::stringstream ssPause;
