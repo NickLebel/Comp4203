@@ -5,7 +5,7 @@ import os
 import os.path
 
 # settings
-pd.options.plotting.backend = "plotly"
+# pd.options.plotting.backend = "plotly"
 
 # Helper function that coverts an xml file into a pandas dataframe to aid in data processing
 def xml_to_pandas_df(filepath):
@@ -59,14 +59,7 @@ def get_transmission_delay(filepath):
   return (delay_in_nano / 1000000)
 
 
-AODV_files = ["Scenario 1/Experiment 1/S1-E1-AODV-20nodes.csv", "Scenario 1/Experiment 1/S1-E1-AODV-30nodes.csv", "Scenario 1/Experiment 1/S1-E1-AODV-50nodes.csv","Scenario 1/Experiment 1/S1-E1-AODV-70nodes.csv"]
-other = ["Scenario 1/Experiment 1/S1-E1-DSDV-20nodes.csv",
-"Scenario 1/Experiment 1/S1-E1-DSDV-30nodes.csv","Scenario 1/Experiment 1/S1-E1-DSDV-50nodes.csv","Scenario 1/Experiment 1/S1-E1-DSDV-70nodes.csv","Scenario 1/Experiment 1/S1-E1-OLSR-20nodes.csv","Scenario 1/Experiment 1/S1-E1-OLSR-30nodes.csv",
-"Scenario 1/Experiment 1/S1-E1-OLSR-50nodes.csv","Scenario 1/Experiment 1/S1-E1-OLSR-70nodes.csv"]
-
-names = ["AODV","DSDV","OLSR"]
-
-def graphPDR(experiment, title, xLabel, yLabel):
+def graphPDR(experiment, title, xLabel, yLabel, xValues):
   data = {
     "AODV": [],
     "DSDV": [],
@@ -81,7 +74,85 @@ def graphPDR(experiment, title, xLabel, yLabel):
         data[protocol].append(pdr)
 
   df = pd.DataFrame.from_dict(data)
-  fig = df.plot.line(title=title)
-  fig.write_html(f"./graphs/{experiment}-PDR.html")
+  df.index = xValues
+  fig = df.plot(kind="line", title=title, ylabel=yLabel, xlabel=xLabel).get_figure()
+  print(df)
+  fig.savefig(f"./graphs/{experiment}-PDR")
 
-graphPDR("nodes", "PDR vs Number of nodes", "Number of nodes", "PDR (%)")
+def graphTransmissionDelay(experiment, title, xLabel, yLabel, xValues):
+  data = {
+    "AODV": [],
+    "DSDV": [],
+    "OLSR": []
+  }
+
+  for protocol in data:
+    for dirpath, dirnames, filenames in os.walk(f"{experiment}/{protocol}/xml"):
+      for filename in filenames:
+        file = os.path.join(dirpath, filename)
+        pdr = get_transmission_delay(file)
+        data[protocol].append(pdr)
+
+  df = pd.DataFrame.from_dict(data)
+  df.index = xValues
+  fig = df.plot(kind="line", title=title, ylabel=yLabel, xlabel=xLabel).get_figure()
+  print(df)
+  fig.savefig(f"./graphs/{experiment}-transmission-delay")
+
+
+def graphPacketLoss(experiment, title, xLabel, yLabel, xValues):
+  data = {
+    "AODV": [],
+    "DSDV": [],
+    "OLSR": []
+  }
+
+  for protocol in data:
+    for dirpath, dirnames, filenames in os.walk(f"{experiment}/{protocol}/xml"):
+      for filename in filenames:
+        file = os.path.join(dirpath, filename)
+        pdr = get_packet_loss_percentage(file)
+        data[protocol].append(pdr)
+
+  df = pd.DataFrame.from_dict(data)
+  df.index = xValues
+  fig = df.plot(kind="line", title=title, ylabel=yLabel, xlabel=xLabel).get_figure()
+  print(df)
+  fig.savefig(f"./graphs/{experiment}-packet-loss")
+
+def graphAvgThroughput(experiment, title, xLabel, yLabel, xValues):
+  data = {
+    "AODV": [],
+    "DSDV": [],
+    "OLSR": []
+  }
+
+  for protocol in data:
+    for dirpath, dirnames, filenames in os.walk(f"{experiment}/{protocol}/csv"):
+      for filename in filenames:
+        file = os.path.join(dirpath, filename)
+        pdr = get_average_throughput(file)
+        data[protocol].append(pdr)
+
+  df = pd.DataFrame.from_dict(data)
+  df.index = xValues
+  fig = df.plot(kind="line", title=title, ylabel=yLabel, xlabel=xLabel, ylim=[0,30]).get_figure()
+  print(df)
+  fig.savefig(f"./graphs/{experiment}-throughput")
+
+# graphPDR("nodes", "PDR vs Number of nodes", "Number of nodes", "PDR (%)", [20,30,50,70])
+# graphPDR("area", "PDR vs Area Simulation", "Area Simulation (m^2)", "PDR (%)", [300,500,1000])
+# graphPDR("speed", "PDR vs Speed Simulation", "Speed Simulation  (m/s)", "PDR (%)", [1,2,5,10,20])
+
+# graphPacketLoss("nodes", "Packet Loss vs Number of nodes", "Number of nodes", "Packet Loss (%)", [20,30,50,70])
+# graphPacketLoss("area", "Packet Loss vs Area Simulation", "Area Simulation (m^2)", "Packet Loss (%)", [300,500,1000])
+# graphPacketLoss("speed", "Packet Loss vs Speed Simulation", "Speed Simulation  (m/s)", "Packet Loss (%)", [1,2,5,10,20])
+
+# graphTransmissionDelay("nodes", "Delay vs Number of nodes", "Number of nodes", "Delay (ms)", [20,30,50,70])
+# graphTransmissionDelay("area", "Delay vs Area Simulation", "Area Simulation (m^2)", "Delay (ms)", [300,500,1000])
+# graphTransmissionDelay("speed", "Delay vs Speed Simulation", "Speed Simulation  (m/s)", "Delay (ms)", [1,2,5,10,20])
+
+# graphAvgThroughput("nodes", "Throughput vs Number of nodes", "Number of nodes", "Throughput (kbps)", [20,30,50,70])
+# graphAvgThroughput("nodesvsreceivers", "Throughput (50% scenario) vs Number of nodes", "Number of nodes", "Throughput (kbps)", [10,20,30,40,50])
+graphAvgThroughput("area", "Throughput vs Area Simulation", "Area Simulation (m^2)", "Throughput (kbps)", [300,500,1000])
+# graphAvgThroughput("speed", "Throughput vs Speed Simulation", "Speed Simulation  (m/s)", "Throughput (kbps)", [1,2,5,10,20])
