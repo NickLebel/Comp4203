@@ -125,6 +125,10 @@ RoutingExperiment::RoutingExperiment ()
 {
 }
 
+/*
+  Print the data of the received packet from the receiver (sink)
+*/
+
 static inline std::string
 PrintReceivedPacket (Ptr<Socket> socket, Ptr<Packet> packet, Address senderAddress)
 {
@@ -144,6 +148,9 @@ PrintReceivedPacket (Ptr<Socket> socket, Ptr<Packet> packet, Address senderAddre
   return oss.str ();
 }
 
+/*
+  Receiver calculates the amount of bytes and packets receieved
+*/
 void
 RoutingExperiment::ReceivePacket (Ptr<Socket> socket)
 {
@@ -157,6 +164,9 @@ RoutingExperiment::ReceivePacket (Ptr<Socket> socket)
     }
 }
 
+/*
+  Write the throughput results to a CSV file, every second of the experiment
+*/
 void
 RoutingExperiment::CheckThroughput ()
 {
@@ -178,6 +188,9 @@ RoutingExperiment::CheckThroughput ()
   Simulator::Schedule (Seconds (1.0), &RoutingExperiment::CheckThroughput, this);
 }
 
+/*
+  Initialize the receiver
+*/
 Ptr<Socket>
 RoutingExperiment::SetupPacketReceive (Ipv4Address addr, Ptr<Node> node)
 {
@@ -190,6 +203,9 @@ RoutingExperiment::SetupPacketReceive (Ipv4Address addr, Ptr<Node> node)
   return sink;
 }
 
+/*
+  Parse command line arguments
+*/
 std::string
 RoutingExperiment::CommandSetup (int argc, char **argv)
 {
@@ -220,11 +236,15 @@ main (int argc, char *argv[])
 
   //---------------- CHANGE NUMBER OF RECEIVERS ----------------
   int nSinks = 10;
+  //---------------- CHANGE POWER ----------------
   double txp = 7.5;
 
   experiment.Run (nSinks, txp, CSVfileName);
 }
 
+/*
+  Run the experiment with the given amount of receivers, power and CSV file name
+*/
 void
 RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
 {
@@ -245,6 +265,7 @@ RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
   int nodePause = 0; //in s
   m_protocolName = "protocol";
 
+  //onOff application packet size
   Config::SetDefault  ("ns3::OnOffApplication::PacketSize",StringValue ("64"));
   Config::SetDefault ("ns3::OnOffApplication::DataRate",  StringValue (rate));
 
@@ -258,6 +279,7 @@ RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
   WifiHelper wifi;
   wifi.SetStandard (WIFI_STANDARD_80211b);
 
+  //set the propagation model to Friis propagation loss model
   YansWifiPhyHelper wifiPhy;
   YansWifiChannelHelper wifiChannel;
   wifiChannel.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
@@ -270,6 +292,7 @@ RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
                                 "DataMode",StringValue (phyMode),
                                 "ControlMode",StringValue (phyMode));
 
+  //set the power value
   wifiPhy.Set ("TxPowerStart",DoubleValue (txp));
   wifiPhy.Set ("TxPowerEnd", DoubleValue (txp));
 
@@ -280,7 +303,7 @@ RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
   int64_t streamIndex = 0; // used to get consistent mobility across scenarios
 
   ObjectFactory pos;
-  //pos.SetTypeId ("ns3::RandomRectanglePositionAllocator");
+
   //---------------- CHANGE AREA ----------------
   pos.SetTypeId ("ns3::RandomBoxPositionAllocator");
   pos.Set ("X", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=200.0]"));
@@ -289,8 +312,11 @@ RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
   Ptr<PositionAllocator> taPositionAlloc = pos.Create ()->GetObject<PositionAllocator> ();
   streamIndex += taPositionAlloc->AssignStreams (streamIndex);
 
+  //set node speed and remove randomness
   std::stringstream ssSpeed;
-  ssSpeed << "ns3::UniformRandomVariable[Min=0.0|Max=" << nodeSpeed << "]";
+  ssSpeed << "ns3::UniformRandomVariable[Min="<< nodeSpeed << "|Max=" << nodeSpeed << "]";
+  
+  //set node pause - ignored
   std::stringstream ssPause;
   ssPause << "ns3::ConstantRandomVariable[Constant=" << nodePause << "]";
   mobilityAdhoc.SetMobilityModel ("ns3::RandomWaypointMobilityModel",
@@ -344,15 +370,18 @@ RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
 
   NS_LOG_INFO ("assigning ip address");
 
+  //set the Ipv addresses
   Ipv4AddressHelper addressAdhoc;
   addressAdhoc.SetBase ("10.1.1.0", "255.255.255.0");
   Ipv4InterfaceContainer adhocInterfaces;
   adhocInterfaces = addressAdhoc.Assign (adhocDevices);
 
+  //set protocol transport
   OnOffHelper onoff1 ("ns3::UdpSocketFactory",Address ());
   onoff1.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1.0]"));
   onoff1.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0.0]"));
 
+  //set up the receievers
   for (int i = 0; i < nSinks; i++)
     {
       Ptr<Socket> sink = SetupPacketReceive (adhocInterfaces.GetAddress (i), adhocNodes.Get (i));
@@ -390,6 +419,7 @@ RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
 
   NS_LOG_INFO ("Run Simulation.");
 
+  //calculate throughput and write it to CSV
   CheckThroughput ();
 
   Simulator::Stop (Seconds (TotalTime));
@@ -400,4 +430,3 @@ RoutingExperiment::Run (int nSinks, double txp, std::string CSVfileName)
 
   Simulator::Destroy ();
 }
-
