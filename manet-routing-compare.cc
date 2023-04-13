@@ -31,6 +31,8 @@
 
 /*
  * This sample code has been modified with the parameters of our research paper.
+ * SOURCE: ns-3: examples/routing/manet-routing-compare.cc
+ * https://www.nsnam.org/docs/release/3.35/doxygen/manet-routing-compare_8cc_source.html 
  */
 
 #include <fstream>
